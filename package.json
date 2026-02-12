@@ -1,0 +1,27 @@
+{
+  "name": "walletx",
+  "version": "1.0.0",
+  "description": "This is an  online payment environment replacing the availability of coupon system.",
+  "homepage": "https://github.com/kartikeygangwar90/WalletX#readme",
+  "bugs": {
+    "url": "https://github.com/kartikeygangwar90/WalletX/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kartikeygangwar90/WalletX.git"
+  },
+  "license": "ISC",
+  "author": "Kartikey Gangwar",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^9.2.1",
+    "nodemon": "^3.1.11"
+  }
+}
