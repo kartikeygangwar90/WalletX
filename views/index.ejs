@@ -8,14 +8,17 @@
 <body>
     <h1>Welcome! <%= userData?.to || "User" %> to Digi Mess</h1>
 
-    <form action="/wallet/balance" method="get">
+    <form action="/wallet/<%= userData. _id %>/balance" method="get">
         <button type="submit">Check Your Balance</button>
     </form>
-    <form action="/wallet/transfer" method="post">
+    <form action="/wallet/<%= userData. _id %>/transfer" method="get">
         <button type="submit">Transfer Amount</button>
     </form>
-    <form action="/wallet/addCredit" method="post">
+    <form action="/wallet/<%= userData. _id %>/addCredit" method="get">
         <button type="submit">Add-Credit</button>
+    </form>
+    <form action="/wallet/<%= userData._id %>/transaction" method="get">
+        <button type="submit">Pay Now</button>
     </form>
 </body>
 </html>

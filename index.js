@@ -19,15 +19,15 @@ let transaction = new Payment( {
     amount: 30,
     msg: "Hello lets do Fun together",
     created_at: new Date(),
-})
+});
 
-transaction.save()
-.then(res => {
-    console.log(res);
-}) 
-.catch(err => {
-    console.log(err);
-})
+// transaction.save()
+// .then(res => {
+//     console.log(res);
+// }) 
+// .catch(err => {
+//     console.log(err);
+// })
 
 
 const express = require("express");
@@ -37,6 +37,7 @@ const methodOverride = require("method-override");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 
 const port = 8080;
 
@@ -53,18 +54,96 @@ app.listen(port, () => {
 
 
 //  this is the wallet and its balance section 
-app.get("/wallet/balance", (req, res) => {
-    res.render("balance.ejs");
+app.get("/wallet/:id/balance", async (req, res) => {
+    let {id} = req.params;
+    let userData = await Payment.findById(id);
+    res.render("balance.ejs", { userData });
 })
 
-app.post("/wallet/transfer", (req, res) => {
-    res.render("transfer.ejs");
+app.get("/wallet/:id/transfer", async (req, res) => {
+    let { id } = req.params;
+    let userData = await Payment.findById(id);
+    res.render("transfer.ejs", { userData });
 })
 
-app.post("/wallet/addCredit", (req, res) => {
-    res.render("addCredit.ejs");
+app.post("/wallet/:id/transfer", async (req, res) => {
+    let {id} = req.params;
+    let amount  = parseFloat(req.body.amount);
+
+    if(isNaN(amount)) {
+        return res.send("Enter amount please");
+    }
+
+    let sender = await Payment.findById(id);
+
+    // Validation 
+    if(!sender) return res.send("User not found");
+
+    if(amount <= 0) return res.send("Enter Valid Amount");
+
+    if(sender.amount < amount) return res.send("Insufficient amount ");
+
+    // Deduct balance 
+    sender.amount -= amount;
+
+    await sender.save();
+
+    // let userData = await Payment.findById(id);
+    // res.render("transfer.ejs", { userData });
+    res.redirect(`/dashboard/${id}`);
 })
 
-app.get("/transactions", (req, res) => {
-    res.render("transaction.ejs");
+app.get("/wallet/:id/addCredit", async (req, res) => {
+    let {id} = req.params;
+    let userData = await Payment.findById(id);
+    res.render("addCredit.ejs", { userData });
 })
+
+app.post("/wallet/:id/addCredit", async (req, res) => {
+    let { id } = req.params;
+    let credit_amount = parseFloat(req.body.credit);
+
+    if(isNaN(credit_amount)) {
+        return res.send("Enter amount please");
+    }
+
+    let reciever = await Payment.findById(id);
+
+    // Validation
+    if(!reciever) return res.send("User not Found");
+
+    if(credit_amount <= 0) return res.send("Enter Valid amount first");
+
+    reciever.credits -= credit_amount;
+    reciever.amount += credit_amount;
+    await reciever.save();
+    
+    res.redirect(`/dashboard/${id}`);
+})
+
+app.get("/wallet/:id/transaction", async (req, res) => {
+    let { id } = req.params;
+    let userData = await Payment.findById(id);
+    res.render("transaction.ejs", { userData });
+})
+
+app.post("/wallet/:id/transaction", async (req, res) => {
+    let { id } = req.params;
+    let spent = parseFloat(req.body.spent);
+
+    if(isNaN(spent)) return res.send("Enter amount please");
+
+    let user = await Payment.findById(id);
+
+    if(!user) return res.send("User not found");
+
+    if(spent <= 0) return res.send("Enter valid amount please !");
+
+    if(user.amount < spent) return res.send("Insufficient money");
+
+    user.amount -= spent;
+
+    await user.save();
+
+    res.redirect(`/dashboard/${id}`);
+}) 

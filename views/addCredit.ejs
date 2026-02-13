@@ -6,6 +6,19 @@
     <title>Add_Credit</title>
 </head>
 <body>
-    <h3>Add More credit to your balance Amount !</h3>
+    <h3>Add More credit to your balance Amount: <%= userData.credits %></h3>
+    <br>
+    <h3>Your balance is <%= userData.amount %></h3>
+
+    <form action="/wallet/<%= userData._id %>/addCredit" method="POST">
+        <input 
+        type="number"
+        name="credit"
+        placeholder="Enter amount to add into balance"
+        min="10"
+        required
+        />
+        <button type="submit">Add</button>
+    </form>
 </body>
 </html>

@@ -6,6 +6,17 @@
     <title>Transfer</title>
 </head>
 <body>
-    <h3>You can transfer the choosen amount !!</h3>
+    <h3>You can transfer the choosen amount !! </h3>
+    <h5>The maximum you have is : <%= userData?.amount %></h5>
+    <form action="/wallet/<%= userData._id %>/transfer" method="POST">
+        <input 
+        type="number" 
+        name="amount" 
+        placeholder="Enter Amount"
+        min = "1"
+        required
+        />
+        <button type="submit">Send</button>
+    </form>
 </body>
 </html>

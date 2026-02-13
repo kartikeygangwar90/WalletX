@@ -12,6 +12,12 @@ const paymentSchema = new mongoose.Schema({
     amount: {
         type: Number,
         require: true,
+        default: 0,
+    },
+    credits: {
+        type: Number,
+        require: true,
+        default: 4000,
     },
     msg: {
         type: String,

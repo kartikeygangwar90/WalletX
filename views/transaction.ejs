@@ -7,5 +7,15 @@
 </head>
 <body>
     <h3>Past transactions are available here !!</h3>
+    <h5>How much you wanted to pay</h5>
+    <form action="/wallet/<%= userData._id %>/transaction" method="post">
+        <input
+        type="number"
+        placeholder="Enter amount to be spent"
+        name="spent"
+        required
+        />
+        <button type="submit">Pay</button>
+    </form>
 </body>
 </html>
