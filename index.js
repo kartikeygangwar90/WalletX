@@ -34,6 +34,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
+const Transaction = require("./models/transaction");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -57,7 +58,8 @@ app.listen(port, () => {
 app.get("/wallet/:id/balance", async (req, res) => {
     let {id} = req.params;
     let userData = await Payment.findById(id);
-    res.render("balance.ejs", { userData });
+    let transaction_history = await Transaction.find({});
+    res.render("balance.ejs", { userData , transaction_history});
 })
 
 app.get("/wallet/:id/transfer", async (req, res) => {
@@ -87,6 +89,15 @@ app.post("/wallet/:id/transfer", async (req, res) => {
     sender.amount -= amount;
 
     await sender.save();
+
+    await Transaction.create({
+        sender: id,
+        reciever: id,
+        amount: amount,
+        type: "transfer",
+        date: new Date(),
+    });
+
 
     // let userData = await Payment.findById(id);
     // res.render("transfer.ejs", { userData });

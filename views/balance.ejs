@@ -8,5 +8,13 @@
 <body>
     <h3>Your Current Balance is : <%= userData?.amount %></h3>
     
+    <h4>History</h4>
+    <% for(let transaction of transaction_history) { %>
+        <p> Sender's ID : <%= transaction.sender %></p>
+        <p> Reciever's ID : <%= transaction.reciever %></p>
+        <p>Amount transancted : <%= transaction.amount %></p>
+        <p>Type of Transaction : <%= transaction.type %></p>
+        <p>Date and Time : <%= transaction.date %></p>
+    <% } %>
 </body>
 </html>
