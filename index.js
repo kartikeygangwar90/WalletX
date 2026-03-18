@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const Payment= require("./models/schema's");
+// const Payment = require("./models/schema's");
+const User = require("./models/userSchema");
 
 main()
 .then(res => {
@@ -11,15 +12,23 @@ main()
 
 async function main() {
     await mongoose.connect('mongodb://127.0.0.1:27017/WalletX'); 
+    const count = await User.countDocuments();
+    if(count == 0) {
+        await User.create([
+        { name: "Vishesh", balance: 200 },
+        { name: "Kanak" , credits: 2000},
+    ]);
+    }
 }
 
-let transaction = new Payment( {
-    from: "Vishesh",
-    to: "Kanak",
-    amount: 30,
-    msg: "Hello lets do Fun together",
-    created_at: new Date(),
-});
+// let transaction = new Payment( {
+//     from: "Vishesh",
+//     to: "Kanak",
+//     amount: 30,
+//     msg: "Hello lets do Fun together",
+//     created_at: new Date(),
+// });
+
 
 // transaction.save()
 // .then(res => {
@@ -45,7 +54,10 @@ const port = 8080;
 // This contaions the dashboard section of the website (Home page)
 app.get("/dashboard/:id", async (req, res) => {
     let {id} = req.params;
-    let userData = await Payment.findById(id);
+    let userData = await User.findById(id);
+
+    if(!userData) return res.send("Invalid user ID");
+    
     res.render("index.ejs", { userData });
 })
 
@@ -57,42 +69,51 @@ app.listen(port, () => {
 //  this is the wallet and its balance section 
 app.get("/wallet/:id/balance", async (req, res) => {
     let {id} = req.params;
-    let userData = await Payment.findById(id);
+    let userData = await User.findById(id);
+    // let amount  = parseFloat(req.body.amount);
+
+    
     let transaction_history = await Transaction.find({});
     res.render("balance.ejs", { userData , transaction_history});
 })
 
 app.get("/wallet/:id/transfer", async (req, res) => {
     let { id } = req.params;
-    let userData = await Payment.findById(id);
-    res.render("transfer.ejs", { userData });
+    let userData = await User.findById(id);
+    let users = await User.find({_id: {$ne: id} });
+    res.render("transfer.ejs", { userData, users });
 })
 
 app.post("/wallet/:id/transfer", async (req, res) => {
     let {id} = req.params;
     let amount  = parseFloat(req.body.amount);
+    let receiverId = req.body.receiverId;
+
 
     if(isNaN(amount)) {
         return res.send("Enter amount please");
     }
 
-    let sender = await Payment.findById(id);
+    let sender = await User.findById(id);
+    let receiver = await User.findById(receiverId);
 
     // Validation 
     if(!sender) return res.send("User not found");
 
     if(amount <= 0) return res.send("Enter Valid Amount");
 
-    if(sender.amount < amount) return res.send("Insufficient amount ");
+    if(sender.balance < amount) return res.send("Insufficient amount ");
 
     // Deduct balance 
-    sender.amount -= amount;
+    sender.balance -= amount;
+    receiver.balance += amount;
 
     await sender.save();
+    await receiver.save();
 
     await Transaction.create({
-        sender: id,
-        reciever: id,
+        sender: sender._id,
+        receiver: receiver._id,
         amount: amount,
         type: "transfer",
         date: new Date(),
@@ -106,7 +127,7 @@ app.post("/wallet/:id/transfer", async (req, res) => {
 
 app.get("/wallet/:id/addCredit", async (req, res) => {
     let {id} = req.params;
-    let userData = await Payment.findById(id);
+    let userData = await User.findById(id);
     res.render("addCredit.ejs", { userData });
 })
 
@@ -118,15 +139,16 @@ app.post("/wallet/:id/addCredit", async (req, res) => {
         return res.send("Enter amount please");
     }
 
-    let reciever = await Payment.findById(id);
+    let reciever = await User.findById(id);
 
     // Validation
     if(!reciever) return res.send("User not Found");
 
     if(credit_amount <= 0) return res.send("Enter Valid amount first");
 
+    // reciever.credits -= credit_amount;
+    reciever.balance += credit_amount;
     reciever.credits -= credit_amount;
-    reciever.amount += credit_amount;
     await reciever.save();
     
     res.redirect(`/dashboard/${id}`);
@@ -134,7 +156,7 @@ app.post("/wallet/:id/addCredit", async (req, res) => {
 
 app.get("/wallet/:id/transaction", async (req, res) => {
     let { id } = req.params;
-    let userData = await Payment.findById(id);
+    let userData = await User.findById(id);
     res.render("transaction.ejs", { userData });
 })
 
@@ -144,15 +166,15 @@ app.post("/wallet/:id/transaction", async (req, res) => {
 
     if(isNaN(spent)) return res.send("Enter amount please");
 
-    let user = await Payment.findById(id);
+    let user = await User.findById(id);
 
     if(!user) return res.send("User not found");
 
     if(spent <= 0) return res.send("Enter valid amount please !");
 
-    if(user.amount < spent) return res.send("Insufficient money");
+    if(user.balance < spent) return res.send("Insufficient money");
 
-    user.amount -= spent;
+    user.balance -= spent;
 
     await user.save();
 

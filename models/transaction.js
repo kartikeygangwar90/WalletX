@@ -2,19 +2,22 @@ const mongoose = require("mongoose");
 
 const transactionsSchema = new mongoose.Schema({
     sender: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
-    reciever: {
-        type: String,
+    receiver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     amount: {
         type: Number,
-        require: true,
+        required: true,
     },
     type: {
         type: String,
+        default: "transfer",
     },
     date: {
         type: Date,

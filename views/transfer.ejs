@@ -7,8 +7,19 @@
 </head>
 <body>
     <h3>You can transfer the choosen amount !! </h3>
-    <h5>The maximum you have is : <%= userData?.amount %></h5>
+    <h5>The maximum you have is : <%= userData?.balance %></h5>
     <form action="/wallet/<%= userData._id %>/transfer" method="POST">
+        <label>Send to: </label>
+        <select name="receiverId" required>
+            <% users.forEach(user => { %>
+                <option value="<%= user._id %>">
+                    <%= user.name %>
+                </option>
+            <% }) %>
+        </select>
+
+        <br> <br>
+        
         <input 
         type="number" 
         name="amount" 
