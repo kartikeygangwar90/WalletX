@@ -10,8 +10,8 @@
     
     <h4>History</h4>
     <% for(let transaction of transaction_history) { %>
-        <p> Sender's ID : <%= transaction.sender %></p>
-        <p> Reciever's ID : <%= transaction.reciever %></p>
+        <p> Sender's ID : <%= transaction.sender.name %></p>
+        <p> Reciever's ID : <%= transaction.receiver.name %></p>
         <p>Amount transancted : <%= transaction.amount %></p>
         <p>Type of Transaction : <%= transaction.type %></p>
         <p>Date and Time : <%= transaction.date %></p>

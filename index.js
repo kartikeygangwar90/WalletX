@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const Payment = require("./models/schema's");
 const User = require("./models/userSchema");
 
 main()
@@ -20,24 +19,6 @@ async function main() {
     ]);
     }
 }
-
-// let transaction = new Payment( {
-//     from: "Vishesh",
-//     to: "Kanak",
-//     amount: 30,
-//     msg: "Hello lets do Fun together",
-//     created_at: new Date(),
-// });
-
-
-// transaction.save()
-// .then(res => {
-//     console.log(res);
-// }) 
-// .catch(err => {
-//     console.log(err);
-// })
-
 
 const express = require("express");
 const app = express();
@@ -70,10 +51,11 @@ app.listen(port, () => {
 app.get("/wallet/:id/balance", async (req, res) => {
     let {id} = req.params;
     let userData = await User.findById(id);
-    // let amount  = parseFloat(req.body.amount);
-
     
-    let transaction_history = await Transaction.find({});
+    let transaction_history = await Transaction.find()
+        .populate("sender")
+        .populate("receiver")
+        .sort({date : -1});
     res.render("balance.ejs", { userData , transaction_history});
 })
 
@@ -88,7 +70,6 @@ app.post("/wallet/:id/transfer", async (req, res) => {
     let {id} = req.params;
     let amount  = parseFloat(req.body.amount);
     let receiverId = req.body.receiverId;
-
 
     if(isNaN(amount)) {
         return res.send("Enter amount please");
@@ -118,10 +99,6 @@ app.post("/wallet/:id/transfer", async (req, res) => {
         type: "transfer",
         date: new Date(),
     });
-
-
-    // let userData = await Payment.findById(id);
-    // res.render("transfer.ejs", { userData });
     res.redirect(`/dashboard/${id}`);
 })
 
@@ -151,7 +128,7 @@ app.post("/wallet/:id/addCredit", async (req, res) => {
     reciever.credits -= credit_amount;
     await reciever.save();
     
-    res.redirect(`/dashboard/${id}`);
+    res.redirect(`/dashboard/${id}`);  
 })
 
 app.get("/wallet/:id/transaction", async (req, res) => {
