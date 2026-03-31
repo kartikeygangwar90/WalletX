@@ -10,7 +10,7 @@
     <br>
     <h3>Your balance is <%= userData.balance %></h3>
 
-    <form action="/wallet/<%= userData._id %>/addCredit" method="POST">
+    <form action="/wallet/addCredit" method="POST">
         <input 
         type="number"
         name="credit"
@@ -20,5 +20,15 @@
         />
         <button type="submit">Add</button>
     </form>
+
+    <h4>Credit History</h4>
+    <% for(let credit of credit_history) { %>
+        <hr>
+        <p> Reciever : <%= credit.receiver?.name %></p>
+        <p>Amount Credited : <%= credit.creditedAmount %></p>
+        <p>Type : <%= credit.type %></p>
+        <p>Date and Time : <%= credit.date.toLocaleString() %></p>
+        <% } %>
+        <hr>
 </body>
 </html>

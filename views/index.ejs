@@ -8,17 +8,21 @@
 <body>
     <h1>Welcome! <%= userData ? userData.name : "User" %> to Digi Mess</h1>
     <% if(userData) { %>
-        <form action="/wallet/<%= userData._id %>/balance" method="get">
+        <form action="/wallet/balance" method="get">
             <button type="submit">Check Your Balance</button>
         </form>
-        <form action="/wallet/<%= userData._id %>/transfer" method="get">
+        <form action="/wallet/transfer" method="get">
             <button type="submit">Transfer Amount</button>
         </form>
-        <form action="/wallet/<%= userData._id %>/addCredit" method="get">
+        <form action="/wallet/addCredit" method="get">
             <button type="submit">Add-Credit</button>
         </form>
-        <form action="/wallet/<%= userData._id %>/transaction" method="get">
+        <form action="/wallet/transaction" method="get">
             <button type="submit">Pay Now</button>
+        </form>
+        <form action="/logout" method="get">
+            <button type="submit">Logout</button>
+
         </form>
     <% } else { %>
         <h4>User not found</h4>

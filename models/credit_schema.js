@@ -1,17 +1,16 @@
 const mongoose = require("mongoose");
 
-const transactionsSchema = new mongoose.Schema({
+const creditSchema = new mongoose.Schema({
     sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+        type: String,
+        default : "Mess Account",
     },
     receiver: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
-    amount: {
+    creditedAmount: {
         type: Number,
         required: true,
     },
@@ -25,6 +24,6 @@ const transactionsSchema = new mongoose.Schema({
     }
 })
 
-const Transaction =  mongoose.model('Transaction', transactionsSchema);
+const Credit =  mongoose.model('credits', creditSchema);
 
-module.exports = Transaction;
+module.exports = Credit;
